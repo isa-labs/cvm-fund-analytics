@@ -1,6 +1,6 @@
 # CVM Fund Analytics
 
-Risk/return analysis and clustering of Brazilian investment funds using public data from the ![CVM](https://www.gov.br/cvm/en) (Brazilian Securities and Exchange Commission).
+Risk/return analysis and clustering of Brazilian investment funds using public data from the [CVM](https://www.gov.br/cvm/en) (Brazilian Securities and Exchange Commission).
 
 ---
 
