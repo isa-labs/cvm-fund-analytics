@@ -1,6 +1,6 @@
 # CVM Fund Analytics
 
-Risk/return analysis and clustering of Brazilian investment funds using public data from the ![CVM](https://www.gov.br/cvm/en) (Brazilian Securities and Exchange Commission).
+Risk/return analysis and clustering of Brazilian investment funds using public data from the [CVM](https://www.gov.br/cvm/en) (Brazilian Securities and Exchange Commission).
 
 ---
 
@@ -8,7 +8,7 @@ Risk/return analysis and clustering of Brazilian investment funds using public d
 
 **Risk/Return analysis**
 - Downloads CVM monthly NAV data as `.zip` files and consolidates into a single DataFrame
-- Caches raw CSVs locally — only downloads missing months on subsequent runs
+- Caches raw CSVs locally, only downloads missing months on subsequent runs
 - Computes 6 metrics per fund: cumulative return, annualized return, volatility, Sharpe ratio, max drawdown, Calmar ratio
 - Deduplicates the fund register by CNPJ and joins with daily data via `CNPJ_BASE` key
 - Screens and ranks funds by class (FIA, FIM, FI-RF, FIC) with chainable filters
@@ -186,4 +186,4 @@ CVM files are published monthly, semicolon-separated, Latin-1 encoded. No authen
 
 ## License
 
-MIT — data sourced from CVM under Brazil's [Lei de Acesso à Informação (LAI)](http://www.planalto.gov.br/ccivil_03/_ato2011-2014/2012/lei/l12527.htm).
+MIT - data sourced from CVM under Brazil's [Lei de Acesso à Informação (LAI)](http://www.planalto.gov.br/ccivil_03/_ato2011-2014/2012/lei/l12527.htm).
