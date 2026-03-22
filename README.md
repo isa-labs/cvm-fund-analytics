@@ -34,7 +34,7 @@ Risk/return analysis and clustering of Brazilian investment funds using public d
 | Maximum Drawdown | Largest peak-to-trough decline |
 | Calmar Ratio | Annualized return / \|Max Drawdown\| |
 
-> **Risk-free rate:** CDI approximation (10.5% p.a. — adjust `RISK_FREE_ANNUAL` in `metrics.py`)
+> **Risk-free rate:** CDI approximation (10.5% p.a. adjust `RISK_FREE_ANNUAL` in `metrics.py`)
 
 ---
 
@@ -65,12 +65,12 @@ cvm-fund-analytics/
 ## Quickstart
 
 ```bash
-# 1. Clone and install
+# Clone and install
 git clone https://github.com/isa-labs/cvm-fund-analytics.git
 cd cvm-fund-analytics
 pip install -r requirements.txt
 
-# 2. Convert notebook and launch
+# Convert notebook and launch
 jupytext --to notebook notebooks/analysis.py
 jupyter lab notebooks/analysis.ipynb
 ```
