@@ -107,7 +107,7 @@ def plot_sharpe_bar(
 
 def plot_risk_return_scatter(
     metrics_df: pd.DataFrame,
-    title: str = "Risk vs. Return",
+    title: str = "Risk vs Return",
     figsize: tuple = (9, 7),
 ) -> plt.Figure:
     """

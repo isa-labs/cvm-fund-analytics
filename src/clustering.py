@@ -128,7 +128,7 @@ def plot_elbow(elbow_df: pd.DataFrame, figsize: tuple = (10, 4)) -> plt.Figure:
         ax.grid(axis="y", color="#E2E8F0", linewidth=0.6)
 
     ax1.plot(elbow_df["k"], elbow_df["inertia"], marker="o", color="#2563EB", linewidth=2)
-    ax1.set_title("Elbow — Inertia", fontweight="bold")
+    ax1.set_title("Elbow - Inertia", fontweight="bold")
     ax1.set_xlabel("k")
     ax1.set_ylabel("Inertia")
 

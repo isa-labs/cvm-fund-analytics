@@ -118,13 +118,13 @@ plot_cluster_profiles(clustered)
 
 Charts are saved to the `outputs/` folder after running the notebook.
 
-**Top 15 Equity Funds — Sharpe Ratio**
+**Top 15 Equity Funds - Sharpe Ratio**
 ![Sharpe Bar](outputs/sharpe_bar_fia.png)
 
-**Risk vs. Return — Multi-Strategy Funds**
+**Risk vs Return - Multi-Strategy Funds**
 ![Risk Return](outputs/risk_return_fim.png)
 
-**Cumulative Return — Top 5 Equity Funds**
+**Cumulative Return - Top 5 Equity Funds**
 ![Cumulative Return](outputs/cumulative_top5_fia.png)
 
 **Optimal Number of Clusters (Elbow + Silhouette)**
@@ -133,7 +133,7 @@ Charts are saved to the `outputs/` folder after running the notebook.
 **PCA Cluster Projection**
 ![PCA Clusters](outputs/pca_clusters.png)
 
-**Cluster Profiles — Mean Metrics**
+**Cluster Profiles - Mean Metrics**
 ![Cluster Profiles](outputs/cluster_profiles.png)
 
 ---

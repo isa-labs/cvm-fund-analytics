@@ -113,7 +113,7 @@ metrics_named = metrics_named[
 ]
 
 """
-Remove funds with extreme Sharpe ratios — caused by near-zero volatility
+Remove funds with extreme Sharpe ratios - caused by near-zero volatility
 or corrupt NAV series that survived the previous filters
 """
 metrics_named = metrics_named[metrics_named["sharpe_ratio"].between(-10, 20)]
@@ -132,7 +132,7 @@ fim_clean = metrics_named[
     (metrics_named["annualized_volatility"] < 2) &
     (metrics_named["annualized_return"].between(-1, 5))
 ]
-fig2 = plot_risk_return_scatter(fim_clean, title="Risk vs. Return — Multi-Strategy Funds (Multimercado)")
+fig2 = plot_risk_return_scatter(fim_clean, title="Risk vs Return - Multi-Strategy Funds (Multimercado)")
 fig2.savefig("outputs/risk_return_fim.png", bbox_inches="tight")
 plt.show()
 # %%
