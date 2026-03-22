@@ -28,9 +28,9 @@ Risk/return analysis and clustering of Brazilian investment funds using public d
 
 ![dashboard_01](outputs/dashboard_01.png)
 
-![dashboards_02](outputs/dashboard_02.png)
+![dashboard_02](outputs/dashboard_02.png)
 
-![dashboards_03](outputs/dashboard_03.png)
+![dashboard_03](outputs/dashboard_03.png)
 
 ---
 
