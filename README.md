@@ -26,11 +26,9 @@ Risk/return analysis and clustering of Brazilian investment funds using public d
 - Period selector shows which months are cached locally vs. need to be downloaded
 - All 6 charts are interactive with zoom, hover tooltips and dynamic filtering
 
-![dashboard_01](outputs/dashboard_01.png)
+![dashboard_01](outputs/dashboard_01.PNG)
 
-![dashboard_02](outputs/dashboard_02.png)
-
-![dashboard_03](outputs/dashboard_03.png)
+![dashboard_03](outputs/dashboard_02.png)
 
 ---
 
