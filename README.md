@@ -8,9 +8,8 @@ Risk/return analysis and clustering of Brazilian investment funds using public d
 
 **Risk/Return analysis**
 - Downloads CVM monthly NAV data as `.zip` files and consolidates into a single DataFrame
-- Caches raw CSVs locally, only downloads missing months on subsequent runs
+- Persists data locally using **DuckDB**, loads from database on subsequent runs, downloads missing months automatically
 - Computes 6 metrics per fund: cumulative return, annualized return, volatility, Sharpe ratio, max drawdown, Calmar ratio
-- Deduplicates the fund register by CNPJ and joins with daily data via `CNPJ_BASE` key
 - Screens and ranks funds by class (FIA, FIM, FI-RF, FIC) with chainable filters
 - Filters out corrupt NAV series (zero/negative quotes, extreme volatility or return outliers)
 
@@ -20,6 +19,18 @@ Risk/return analysis and clustering of Brazilian investment funds using public d
 - PCA projection for 2D cluster visualization
 - Cluster profile comparison (mean metrics per group)
 - Cluster labels: `Conservative`, `Aggressive Growth`, `High Volatility`, `Distressed`
+
+**Interactive Dashboard**
+- Built with Streamlit and Plotly for interactive visualization
+- Sidebar filters: period, fund class, minimum Sharpe ratio, top N funds, minimum trading days
+- Period selector shows which months are cached locally vs. need to be downloaded
+- All 6 charts are interactive with zoom, hover tooltips and dynamic filtering
+
+![dashboard_01](outputs/dashboard_01.png)
+
+![dashboards_02](outputs/dashboard_02.png)
+
+![dashboards_03](outputs/dashboard_03.png)
 
 ---
 
@@ -42,8 +53,10 @@ Risk/return analysis and clustering of Brazilian investment funds using public d
 
 ```
 cvm-fund-analytics/
+├── app.py                 # Streamlit interactive dashboard
 ├── data/
-│   └── raw/               # CVM CSV files (git-ignored)
+│   ├── raw/               # CVM CSV files (git-ignored)
+│   └── cvm.duckdb         # Local DuckDB database (git-ignored)
 ├── notebooks/
 │   └── analysis.py        # End-to-end analysis (jupytext percent format)
 ├── outputs/               # Saved charts
@@ -53,7 +66,9 @@ cvm-fund-analytics/
 │   ├── metrics.py         # Risk/return metric calculations
 │   ├── screener.py        # Fund filtering and ranking
 │   ├── clustering.py      # K-Means clustering + PCA visualization
-│   └── viz.py             # Matplotlib charts
+│   ├── database.py        # DuckDB persistence layer
+│   ├── viz.py             # Matplotlib charts (notebook/static export)
+│   └── viz_plotly.py      # Plotly charts (interactive dashboard)
 ├── .gitignore
 ├── LICENSE
 ├── requirements.txt
@@ -69,8 +84,17 @@ cvm-fund-analytics/
 git clone https://github.com/isa-labs/cvm-fund-analytics.git
 cd cvm-fund-analytics
 pip install -r requirements.txt
+```
 
-# Convert notebook and launch
+**Run the interactive dashboard:**
+
+```bash
+streamlit run app.py
+```
+
+**Run the analysis notebook:**
+
+```bash
 jupytext --to notebook notebooks/analysis.py
 jupyter lab notebooks/analysis.ipynb
 ```
@@ -78,17 +102,21 @@ jupyter lab notebooks/analysis.ipynb
 **Screening example:**
 
 ```python
-from src.ingest import download_range, load_register
+from src.database import get_or_load
 from src.metrics import build_metrics_table
 from src.screener import Screener
+from src.ingest import load_register
 
-daily = download_range(start="2025-01", end="2025-12")
+# Loads from DuckDB if available, downloads from CVM otherwise
+months = [f"2025-{m:02d}" for m in range(1, 13)]
+daily = get_or_load(months)
+
 register = load_register()
 metrics = build_metrics_table(daily, min_days=60)
 
 top = (
     Screener(metrics, register)
-    .filter(fund_class="Ações", active_only=True, min_sharpe=0.0)
+    .filter(fund_class="Ações", active_only=False, min_sharpe=0.0)
     .rank_by("sharpe_ratio")
     .top(20)
 )
@@ -146,8 +174,6 @@ All data is fetched directly from **CVM's open data portal**. Files are publishe
 |---|---|
 | Daily fund NAV (inf_diario) | `dados.cvm.gov.br/dados/FI/DOC/INF_DIARIO/DADOS/` |
 | Fund register (cadastro) | `dados.cvm.gov.br/dados/FI/CAD/DADOS/` |
-
-CVM files are published monthly, semicolon-separated, Latin-1 encoded. No authentication required.
 
 ---
 

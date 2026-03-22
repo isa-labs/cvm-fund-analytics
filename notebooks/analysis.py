@@ -20,31 +20,12 @@ pd.set_option("display.float_format", "{:.4f}".format)
 plt.rcParams["figure.dpi"] = 120
 # %%
 # Download data
-# Downloads 6 months of daily CVM fund data (~300k rows)
-# On first run this may take 1-2 minutes depending on connection
-def load_or_download(start, end):
-    start_dt = datetime.strptime(start, "%Y-%m")
-    end_dt = datetime.strptime(end, "%Y-%m")
-    
-    frames = []
-    current = start_dt
-    while current <= end_dt:
-        path = f"data/raw/inf_diario_fi_{current.year}{current.month:02d}.csv"
-        if os.path.exists(path):
-            print(f"Loading from disk: {path}")
-            df = pd.read_csv(path, dtype={"CNPJ_FUNDO_CLASSE": str}, low_memory=False)
-            df["CNPJ_BASE"] = df["CNPJ_FUNDO_CLASSE"].str[:18]
-            frames.append(df)
-        else:
-            from src.ingest import download_month
-            frames.append(download_month(current.year, current.month))
-        if current.month == 12:
-            current = current.replace(year=current.year + 1, month=1)
-        else:
-            current = current.replace(month=current.month + 1)
-    return pd.concat(frames, ignore_index=True)
+# On first run: downloads 12 months from CVM and persists to DuckDB (~6M rows)
+# On subsequent runs: loads directly from local DuckDB database
+from src.database import get_or_load
 
-daily = load_or_download(start="2025-01", end="2025-12")
+months = [f"2025-{m:02d}" for m in range(1, 13)]
+daily = get_or_load(months)
 
 register = load_register()
 
@@ -132,7 +113,7 @@ fim_clean = metrics_named[
     (metrics_named["annualized_volatility"] < 2) &
     (metrics_named["annualized_return"].between(-1, 5))
 ]
-fig2 = plot_risk_return_scatter(fim_clean, title="Risk vs Return - Multi-Strategy Funds (Multimercado)")
+fig2 = plot_risk_return_scatter(fim_clean, title="Risk vs Return - Multi-Strategy Funds")
 fig2.savefig("outputs/risk_return_fim.png", bbox_inches="tight")
 plt.show()
 # %%

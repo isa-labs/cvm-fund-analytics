@@ -10,9 +10,12 @@ venv/
 .ipynb_checkpoints/
 *.ipynb_checkpoints
 
-# Data — raw CVM files can be large; regenerate with ingest.py
+# Data - raw CVM files can be large, regenerate with ingest.py
 data/raw/*.csv
 
 # OS
 .DS_Store
 Thumbs.db
+
+# DuckDB
+data/cvm.duckdb
