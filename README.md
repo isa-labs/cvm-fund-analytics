@@ -9,6 +9,8 @@ Risk/return analysis and clustering of Brazilian investment funds using public d
 **Risk/Return analysis**
 - Downloads CVM monthly NAV data as `.zip` files and consolidates into a single DataFrame
 - Persists data locally using **DuckDB**, loads from database on subsequent runs, downloads missing months automatically
+- CSV ingestion parallelized with **Dask** for faster loading of large historical files
+- Fund metric computation parallelized with **Dask delayed** across 26k+ funds
 - Computes 6 metrics per fund: cumulative return, annualized return, volatility, Sharpe ratio, max drawdown, Calmar ratio
 - Screens and ranks funds by class (FIA, FIM, FI-RF, FIC) with chainable filters
 - Filters out corrupt NAV series (zero/negative quotes, extreme volatility or return outliers)
@@ -23,7 +25,7 @@ Risk/return analysis and clustering of Brazilian investment funds using public d
 **Interactive Dashboard**
 - Built with Streamlit and Plotly for interactive visualization
 - Sidebar filters: period, fund class, minimum Sharpe ratio, top N funds, minimum trading days
-- Period selector shows which months are cached locally vs. need to be downloaded
+- Period selector shows which months are cached locally vs need to be downloaded
 - All 6 charts are interactive with zoom, hover tooltips and dynamic filtering
 
 ![dashboard_01](outputs/dashboard_01.PNG)
@@ -61,10 +63,10 @@ cvm-fund-analytics/
 ├── src/
 │   ├── __init__.py
 │   ├── ingest.py          # CVM data download and register loading
-│   ├── metrics.py         # Risk/return metric calculations
+│   ├── metrics.py         # Risk/return metric calculations (Dask parallelized)
 │   ├── screener.py        # Fund filtering and ranking
 │   ├── clustering.py      # K-Means clustering + PCA visualization
-│   ├── database.py        # DuckDB persistence layer
+│   ├── database.py        # DuckDB persistence layer (Dask CSV ingestion)
 │   ├── viz.py             # Matplotlib charts (notebook/static export)
 │   └── viz_plotly.py      # Plotly charts (interactive dashboard)
 ├── .gitignore
