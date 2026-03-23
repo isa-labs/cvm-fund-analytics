@@ -18,4 +18,4 @@ data/raw/*.csv
 Thumbs.db
 
 # DuckDB
-data/cvm.duckdb
+data/*.duckdb
