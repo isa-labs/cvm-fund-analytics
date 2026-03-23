@@ -11,6 +11,9 @@ Metrics:
 
 import numpy as np
 import pandas as pd
+import dask.dataframe as dd
+from dask import delayed
+import dask
 
 RISK_FREE_ANNUAL = 0.105 # CDI approximation, update as needed
 TRADING_DAYS = 252
@@ -82,35 +85,35 @@ def compute_all(nav_series: pd.Series) -> dict:
         "n_days": nav_series.dropna().__len__(),
     }
 
+def _compute_fund_metrics(group_data: pd.DataFrame, cnpj: str, min_days: int) -> dict | None:
+    # Computes metrics for a single fund — runs in parallel
+    series = (
+        group_data.sort_values("DT_COMPTC")
+        .set_index("DT_COMPTC")["VL_QUOTA"]
+        .dropna()
+    )
+    series = series[series > 0]
+    if len(series) < min_days or (series.std() / series.mean()) > 10:
+        return None
+    row = {"CNPJ_BASE": cnpj}
+    row.update(compute_all(series))
+    return row
+
 def build_metrics_table(
     daily_data: pd.DataFrame,
     min_days: int = 60,
 ) -> pd.DataFrame:
-    """
-    Receives a DataFrame with columns [CNPJ_FUNDO_CLASSE, DT_COMPTC, VL_QUOTA]
-    and returns one row per fund with all metrics
-    daily_data: pd.DataFrame
-        Output of ingest.download_range(), possibly merged with register
-    min_days: int
-        Minimum number of trading days required to include a fund
-    Returns: pd.DataFrame indexed by CNPJ_FUNDO_CLASSE
-    """
-    results = []
+    # Create delayed tasks for each fund — runs in parallel
+    tasks = [
+        delayed(_compute_fund_metrics)(group, cnpj, min_days)
+        for cnpj, group in daily_data.groupby("CNPJ_BASE")
+    ]
 
-    for cnpj, group in daily_data.groupby("CNPJ_BASE"):
-        series = (
-            group.sort_values("DT_COMPTC")
-            .set_index("DT_COMPTC")["VL_QUOTA"]
-            .dropna()
-        )
-        
-        series = series[series > 0]
-        if len(series) < min_days or (series.std() / series.mean()) > 10:
-            continue
+    # Execute all tasks in parallel
+    results = dask.compute(*tasks)
 
-        row = {"CNPJ_BASE": cnpj}
-        row.update(compute_all(series))
-        results.append(row)
+    # Filter out None results
+    results = [r for r in results if r is not None]
 
     df = pd.DataFrame(results).set_index("CNPJ_BASE")
     return df
