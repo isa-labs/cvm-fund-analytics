@@ -12,6 +12,7 @@ import os
 import glob
 import duckdb
 import pandas as pd
+import dask.dataframe as dd
 
 DB_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "cvm.duckdb")
 RAW_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "raw")
@@ -146,7 +147,9 @@ def sync_from_csv(con: duckdb.DuckDBPyConnection) -> list[str]:
             continue
 
         print(f"Syncing {year_month} from CSV to DuckDB")
-        df = pd.read_csv(path, dtype={"CNPJ_FUNDO_CLASSE": str}, low_memory=False)
+        import dask.dataframe as dd
+        ddf = dd.read_csv(path, dtype={"CNPJ_FUNDO_CLASSE": str}, assume_missing=True)
+        df = ddf.compute()
         insert_month(con, df, year_month)
         inserted.append(year_month)
 
@@ -177,7 +180,8 @@ def get_or_load(months: list[str]) -> pd.DataFrame:
 
         if os.path.exists(csv_path):
             print(f"Loading {ym} from CSV")
-            df = pd.read_csv(csv_path, dtype={"CNPJ_FUNDO_CLASSE": str}, low_memory=False)
+            ddf = dd.read_csv(csv_path, dtype={"CNPJ_FUNDO_CLASSE": str}, assume_missing=True)
+            df = ddf.compute()
         else:
             print(f"Downloading {ym} from CVM")
             df = download_month(year, month, save=True)
